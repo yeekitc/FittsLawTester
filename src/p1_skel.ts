@@ -505,15 +505,19 @@ class FittsTestUI extends UIClass {
                     "  For each trial click the center of the blue target to begin";
                 this.theBackground.msg3 = 
                     "  Then click inside the green circle that appears";
+                // Make sure the reticle and target are invisible
                 this.theReticle.visible = false;
-
-                // a bit more left to do...
-                // === YOUR CODE HERE ===
+                this.theTarget.visible = false;
+                
+                // Display the background and wait for a click to start trials
+                this.theBackground.visible = true;
 
             break;
             case 'begin_trial':
                 
-                // === YOUR CODE HERE ===
+                // set the reticle visible and the target invisible
+                this.theReticle.visible = true;
+                this.theTarget.visible = false;
         
             break;
             case 'in_trial':
@@ -554,7 +558,8 @@ class FittsTestUI extends UIClass {
             const {retX:retX, retY:retY, targX:targX, targY:targY, targD:targDiam} = 
                 pickLocationsAndSize(this.canvas.width,this.canvas.height);
 
-            // === YOUR CODE HERE ===
+            // change the global state to 'begin_trial' to start the trial
+            this.configure('begin_trial');
         }
     }
 
@@ -824,7 +829,21 @@ class BackgroundDisplay extends ScreenObject{
         let ypos : number = 20 + fontHeight;
         let xpos : number = 10;
 
-        // === YOUR CODE HERE ===
+        // Draw the first line of text near the top left
+        if (this.msg1.length > 0) {
+            ctx.fillText(this.msg1, xpos, ypos);
+            ypos += fontHeight + leading;
+        }
+        // Draw the second line of text underneath the first
+        if (this.msg2.length > 0) {
+            ctx.fillText(this.msg2, xpos, ypos);
+            ypos += fontHeight + leading;
+        }
+        // Draw the third line of text underneath the second
+        if (this.msg3.length > 0) {
+            ctx.fillText(this.msg3, xpos, ypos);
+            ypos += fontHeight + leading;
+        }
     }
 
     // . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . . . . 
@@ -833,11 +852,10 @@ class BackgroundDisplay extends ScreenObject{
     // in which case we respond to this input by starting a new trial
     override handleClickAt(ptX : number, ptY : number) : boolean {
         
-        // === YOUR CODE HERE ===
-        
-        // === REMOVE THE FOLLOWING CODE (which is here so the skeleton code compiles) ===
+        if (this.visible && this.parentUI.currentState === 'start') {
+            this.parentUI.newTrial();
+        }
         return false;
-        // === END OF CODE TO BE REMOVED ===
     }
 }
 
