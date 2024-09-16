@@ -157,14 +157,12 @@ class UIClass {
     redraw() : void {
         // only redraw if something indicated we need it
         if (this.needsRedraw) {
-            console.log("redrawing...");
             // clear the background, then redraw each of the child objects
             this.context.clearRect(0,0, this.canvas.width,this.canvas.height);
             for (const childObj of this.childObjects) {
                 childObj.draw(this.context);
             }
         }
-        console.log("...done");
         // display is now up-to-date
         this.needsRedraw = false;
     }
@@ -234,7 +232,6 @@ class ScreenObject {
     get visible() : boolean  {return this._visible;}
     set visible(v : boolean) {
         this._visible = v; this.declareDamaged();
-        console.log("Setting visibility to " + v + " for " + this.constructor.name);
     };
 
     // . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . . . . 
@@ -249,8 +246,6 @@ class ScreenObject {
     // its screen appearance to change (so requires a redraw of the interface)
     declareDamaged() {
         this.parentUI.needsRedraw = true;
-        console.log("Object " + this.constructor.name + " is damaged");
-        console.log("Telling " + this.parentUI.constructor.name + " to redraw");
     }
 
     // . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . . . . 
@@ -507,7 +502,6 @@ class FittsTestUI extends UIClass {
         this.currentState = newState;
         switch (this.currentState) {
             case 'start':
-                console.log("Starting Fitts Test UI");
                 // Set the background to show the start message
                 this.theBackground.msg1 = "Press anywhere to begin";
                 this.theBackground.msg2 = 
@@ -523,7 +517,6 @@ class FittsTestUI extends UIClass {
 
             break;
             case 'begin_trial':
-                console.log("Starting a new trial");
                 // Set the background text to show the trial number
                 this.theBackground.msg1 = "Trial #" + this.trialCount + " of " + this.MAX_TRIALS;
                 this.theBackground.msg2 = 
@@ -536,13 +529,11 @@ class FittsTestUI extends UIClass {
         
             break;
             case 'in_trial':
-                console.log("In a trial");
                 // set the reticle invisible and the target visible
                 this.theReticle.visible = false;
                 this.theTarget.visible = true;
             break;
             case 'ended':
-                console.log("All trials are done");
                 this.theBackground.msg1 = "Done! Refresh to start again";
                 this.theTarget.visible = false;
                 this.theReticle.visible = false;
@@ -773,7 +764,6 @@ class Reticle extends Target {
     // Draw the reticle.  This includes cross hair lines and an inner "aiming"
     // circle that indicates the active clickable region of the object.
     override draw(ctx : CanvasRenderingContext2D) : void {
-        
         if (!this.visible) return;
         super.draw(ctx);
         // draw the cross hair lines
@@ -905,6 +895,7 @@ class BackgroundDisplay extends ScreenObject{
         
         if (this.visible && this.parentUI.currentState === 'start') {
             this.parentUI.newTrial();
+            return true;
         }
         return false;
     }
